@@ -1,0 +1,30 @@
+name: Docker registry
+
+on: [push]
+
+env:
+  DOCKER_REGISTRY_URL: "index.docker.io"
+  NAMESPACE: "cheche"
+
+jobs:
+  github:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Login to github registry
+        uses: actions-hub/docker/login@master
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+          DOCKER_REGISTRY_URL: ${{ env.DOCKER_REGISTRY_URL }}
+
+      - name: Build :latest
+        if: success()
+        run: docker build -t ${{ env.DOCKER_REGISTRY_URL }}/${{ env.NAMESPACE }}/app:latest .
+
+      - name: Push to docker hub :latest
+        if: success()
+        uses: actions-hub/docker@master
+        with:
+          args: push ${{ env.DOCKER_REGISTRY_URL }}/${{ env.NAMESPACE }}:latest
