@@ -3,8 +3,9 @@ name: Docker registry
 on: [push]
 
 env:
-  DOCKER_REGISTRY_URL: "index.docker.io"
+  DOCKER_REGISTRY_URL: "docker.io"
   NAMESPACE: "cheche"
+  APP_NAME: 'clash-dashboard'
 
 jobs:
   github:
@@ -21,10 +22,10 @@ jobs:
 
       - name: Build :latest
         if: success()
-        run: docker build -t ${{ env.DOCKER_REGISTRY_URL }}/${{ env.NAMESPACE }}/app:latest .
+        run: docker build -t ${{ env.DOCKER_REGISTRY_URL }}/${{ env.NAMESPACE }}/${{ env.APP_NAME }}:latest .
 
       - name: Push to docker hub :latest
         if: success()
         uses: actions-hub/docker@master
         with:
-          args: push ${{ env.DOCKER_REGISTRY_URL }}/${{ env.NAMESPACE }}:latest
+          args: push ${{ env.DOCKER_REGISTRY_URL }}/${{ env.NAMESPACE }}/${{ env.APP_NAME }}:latest
